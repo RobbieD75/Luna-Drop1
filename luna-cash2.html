@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Luna Cash Rec</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg: #f0f2f5;
+  --surface: #ffffff;
+  --border: #dde1e9;
+  --accent: #1a56db;
+  --accent-dim: rgba(26,86,219,0.08);
+  --red: #e02424;
+  --red-dim: rgba(224,36,36,0.08);
+  --green: #057a55;
+  --green-dim: rgba(5,122,85,0.08);
+  --text: #111827;
+  --muted: #6b7280;
+  --input-bg: #f9fafb;
+  --radius: 12px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+/* HEADER */
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 20px 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+header h1 { font-size: 13px; font-family: 'DM Mono', monospace; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+header p { font-size: 10px; color: var(--muted); margin-top: 2px; font-family: 'DM Mono', monospace; }
+
+.week-badge {
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.06em;
+}
+
+/* TABS */
+.tabs-wrap {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  position: sticky;
+  top: 57px;
+  z-index: 99;
+}
+.tabs-wrap::-webkit-scrollbar { display: none; }
+.tab-btn {
+  flex-shrink: 0;
+  padding: 12px 18px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+.tab-btn.has-flag { color: var(--red); }
+.tab-btn.has-flag.active { border-bottom-color: var(--red); }
+
+.add-night-tab {
+  flex-shrink: 0;
+  padding: 12px 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: 18px;
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+/* PANELS */
+.panel { display: none; padding: 0 0 20px 0; }
+.panel.active { display: block; }
+
+/* SUMMARY PANEL */
+.summary-panel { display: none; padding: 0 0 20px 0; }
+.summary-panel.active { display: block; }
+
+/* SECTIONS */
+.section { margin: 14px 14px 0; }
+.section-label {
+  font-size: 10px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 7px;
+  padding-left: 2px;
+}
+
+/* CARDS */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  padding: 13px 14px;
+  border-bottom: 1px solid var(--border);
+  gap: 10px;
+}
+.field:last-child { border-bottom: none; }
+.field-label { font-size: 13px; color: var(--muted); min-width: 108px; flex-shrink: 0; }
+.field input {
+  background: none; border: none; outline: none;
+  color: var(--text); font-family: 'DM Mono', monospace;
+  font-size: 15px; text-align: right; flex: 1; width: 100%;
+}
+.field input::placeholder { color: #b0b8c8; }
+.field input[type="date"] { font-family: 'DM Sans', sans-serif; font-size: 14px; color-scheme: light; }
+.field input[type="text"] { font-family: 'DM Sans', sans-serif; }
+
+/* STAFF ROWS */
+.staff-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.staff-top {
+  display: flex;
+  align-items: center;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  gap: 10px;
+}
+.staff-name-input {
+  flex: 1; background: none; border: none; outline: none;
+  color: var(--text); font-family: 'DM Sans', sans-serif;
+  font-size: 14px; font-weight: 600;
+}
+.staff-name-input::placeholder { color: #b0b8c8; font-weight: 400; }
+.staff-amount {
+  background: var(--input-bg); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 11px; width: 105px;
+  text-align: right; font-family: 'DM Mono', monospace;
+  font-size: 14px; color: var(--text); outline: none;
+}
+.staff-amount:focus { border-color: var(--accent); }
+.staff-amount::placeholder { color: #b0b8c8; }
+
+.receipt-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  gap: 10px;
+  background: var(--input-bg);
+}
+.receipt-label { font-size: 12px; color: var(--muted); flex: 1; }
+.upload-btn {
+  font-size: 12px; font-family: 'DM Mono', monospace;
+  background: var(--accent-dim); color: var(--accent);
+  border: 1px solid rgba(26,86,219,0.2); border-radius: 6px;
+  padding: 6px 12px; cursor: pointer; letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.thumb-wrap { display: flex; gap: 6px; flex-wrap: wrap; padding: 8px 14px 10px; background: var(--input-bg); border-top: 1px solid var(--border); }
+.thumb {
+  width: 56px; height: 56px; object-fit: cover;
+  border-radius: 6px; border: 1px solid var(--border);
+  cursor: pointer;
+}
+.remove-staff {
+  background: none; border: none; color: #ccc;
+  font-size: 18px; cursor: pointer; padding: 0 2px;
+  line-height: 1;
+}
+.remove-staff:hover { color: var(--red); }
+
+/* MANAGER REPORT UPLOAD */
+.mgr-upload-area {
+  display: flex; align-items: center; gap: 10px;
+  padding: 13px 14px; flex-wrap: wrap;
+}
+.mgr-thumbs { display: flex; gap: 6px; flex-wrap: wrap; padding: 0 14px 12px; }
+
+/* SPEND ROWS */
+.spend-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 11px 14px; border-bottom: 1px solid var(--border);
+}
+.spend-row:last-child { border-bottom: none; }
+.spend-desc {
+  flex: 1; background: none; border: none; outline: none;
+  color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px;
+}
+.spend-desc::placeholder { color: #b0b8c8; }
+.spend-amt {
+  background: var(--input-bg); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 11px; width: 95px;
+  text-align: right; font-family: 'DM Mono', monospace;
+  font-size: 14px; color: var(--red); outline: none;
+}
+.spend-amt::placeholder { color: #b0b8c8; }
+.spend-amt:focus { border-color: var(--red); }
+.remove-btn {
+  background: none; border: none; color: #ccc;
+  font-size: 16px; cursor: pointer; padding: 0;
+}
+.remove-btn:hover { color: var(--red); }
+
+/* ADD BUTTONS */
+.add-btn {
+  width: 100%; padding: 12px;
+  background: none; border: 1px dashed var(--border);
+  border-radius: var(--radius); color: var(--muted);
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  letter-spacing: 0.1em; cursor: pointer; margin-top: 8px;
+  text-transform: uppercase;
+}
+.add-btn:active { background: var(--accent-dim); }
+
+/* STATUS BANNER */
+.status-banner {
+  margin: 12px 14px 0; padding: 12px 14px;
+  border-radius: var(--radius); font-family: 'DM Mono', monospace;
+  font-size: 12px; letter-spacing: 0.04em;
+  display: flex; justify-content: space-between; align-items: center;
+  opacity: 0; transition: opacity 0.3s; pointer-events: none;
+}
+.status-banner.visible { opacity: 1; }
+.status-banner.ok { background: var(--green-dim); border: 1px solid var(--green); color: var(--green); }
+.status-banner.off { background: var(--red-dim); border: 1px solid var(--red); color: var(--red); }
+
+/* RESULT CARD */
+.result-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+}
+.result-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 13px 14px; border-bottom: 1px solid var(--border);
+}
+.result-row:last-child { border-bottom: none; }
+.result-label { font-size: 13px; color: var(--muted); }
+.result-value { font-family: 'DM Mono', monospace; font-size: 15px; color: var(--text); }
+.result-row.total { background: var(--accent-dim); }
+.result-row.total .result-label { color: var(--accent); font-weight: 700; font-size: 14px; }
+.result-row.total .result-value { color: var(--accent); font-size: 18px; font-weight: 700; }
+
+/* NIGHT HEADER BAR */
+.night-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 14px 0;
+}
+.night-title { font-size: 11px; font-family: 'DM Mono', monospace; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+.delete-night-btn {
+  background: none; border: none; color: #ccc;
+  font-size: 12px; font-family: 'DM Mono', monospace;
+  cursor: pointer; letter-spacing: 0.06em; padding: 4px 0;
+}
+.delete-night-btn:hover { color: var(--red); }
+
+/* WEEKLY SUMMARY */
+.summary-night {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden; margin-bottom: 10px;
+}
+.summary-night-header {
+  background: var(--accent); color: white;
+  padding: 10px 14px; font-family: 'DM Mono', monospace;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
+  display: flex; justify-content: space-between;
+}
+.summary-night-header.flagged { background: var(--red); }
+.summary-row {
+  display: flex; justify-content: space-between;
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.summary-row:last-child { border-bottom: none; }
+.summary-row span:last-child { font-family: 'DM Mono', monospace; font-weight: 600; }
+
+.grand-total-card {
+  background: var(--accent); color: white;
+  border-radius: var(--radius); padding: 18px 16px;
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 14px;
+}
+.grand-total-card .gt-label { font-size: 12px; font-family: 'DM Mono', monospace; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.85; }
+.grand-total-card .gt-value { font-size: 28px; font-family: 'DM Mono', monospace; font-weight: 700; }
+
+/* ACTION BUTTONS */
+.action-row {
+  display: flex; gap: 10px; margin: 14px 14px 0;
+}
+.btn-primary {
+  flex: 1; padding: 15px 10px;
+  background: var(--accent); color: white;
+  border: none; border-radius: var(--radius);
+  font-family: 'DM Mono', monospace; font-size: 12px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  cursor: pointer; font-weight: 600;
+}
+.btn-secondary {
+  flex: 1; padding: 15px 10px;
+  background: var(--surface); color: var(--accent);
+  border: 1px solid var(--accent); border-radius: var(--radius);
+  font-family: 'DM Mono', monospace; font-size: 12px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  cursor: pointer; font-weight: 600;
+}
+
+/* LIGHTBOX */
+.lightbox {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.92); z-index: 999;
+  justify-content: center; align-items: center;
+  padding: 20px;
+}
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 100%; max-height: 90vh; border-radius: 8px; }
+.lightbox-close {
+  position: absolute; top: 16px; right: 16px;
+  background: white; border: none; border-radius: 50%;
+  width: 36px; height: 36px; font-size: 20px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+
+@media print {
+  header, .tabs-wrap, .add-btn, .action-row, .delete-night-btn,
+  .remove-btn, .remove-staff, .night-header .delete-night-btn { display: none !important; }
+  .panel { display: block !important; }
+  .summary-panel { display: block !important; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Luna Lounge</h1>
+    <p>WEEKLY CASH RECONCILIATION</p>
+  </div>
+  <div class="week-badge" id="weekBadge">Week of —</div>
+</header>
+
+<div class="tabs-wrap" id="tabsWrap">
+  <!-- tabs injected by JS -->
+  <button class="add-night-tab" onclick="addNight()" title="Add night">＋</button>
+</div>
+
+<div id="panelsContainer"></div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">×</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<script>
+const BOOKKEEPER = 'accounting@wannerstransport.com';
+const BOOKKEEPER_NAME = 'Frances';
+let nightCount = 0;
+let nights = []; // array of night data objects
+
+function fmt(n) {
+  if (isNaN(n)) n = 0;
+  return '$' + Math.abs(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function fmtSigned(n) {
+  if (isNaN(n) || n === 0) return '$0.00';
+  return (n < 0 ? '-' : '') + fmt(n);
+}
+
+// ── NIGHT CREATION ──────────────────────────────────────
+function addNight(label) {
+  nightCount++;
+  const id = 'night-' + nightCount;
+  const defaultLabels = ['Thu','Fri','Sat','Sun','Mon','Tue','Wed'];
+  const tabLabel = label || defaultLabels[(nightCount - 1) % defaultLabels.length];
+
+  // Tab
+  const tabsWrap = document.getElementById('tabsWrap');
+  const addBtn = tabsWrap.querySelector('.add-night-tab');
+  const tab = document.createElement('button');
+  tab.className = 'tab-btn';
+  tab.id = 'tab-' + id;
+  tab.textContent = tabLabel;
+  tab.onclick = () => switchTab(id);
+  tabsWrap.insertBefore(tab, addBtn);
+
+  // Panel
+  const panel = document.createElement('div');
+  panel.className = 'panel';
+  panel.id = 'panel-' + id;
+  panel.innerHTML = buildNightHTML(id, tabLabel, nightCount);
+  document.getElementById('panelsContainer').appendChild(panel);
+
+  // Add summary tab if first night
+  if (nightCount === 1) buildSummaryTab();
+
+  switchTab(id);
+  updateWeekBadge();
+}
+
+function buildNightHTML(id, label, num) {
+  return `
+  <div class="night-header">
+    <span class="night-title">Night ${num} — ${label}</span>
+    <button class="delete-night-btn" onclick="deleteNight('${id}')">Remove Night</button>
+  </div>
+
+  <!-- Night Info -->
+  <div class="section">
+    <div class="section-label">Night Info</div>
+    <div class="card">
+      <div class="field">
+        <span class="field-label">Date</span>
+        <input type="date" id="${id}-date" onchange="updateWeekBadge(); recalcNight('${id}')">
+      </div>
+      <div class="field">
+        <span class="field-label">Manager</span>
+        <input type="text" placeholder="Name" id="${id}-manager" style="text-align:right;">
+      </div>
+      <div class="field">
+        <span class="field-label">Toast Expected</span>
+        <input type="number" placeholder="0.00" id="${id}-toast-exp" step="0.01" oninput="recalcNight('${id}')">
+      </div>
+      <div class="field">
+        <span class="field-label">Toast Final</span>
+        <input type="number" placeholder="0.00" id="${id}-toast-final" step="0.01" oninput="recalcNight('${id}')">
+      </div>
+    </div>
+  </div>
+
+  <!-- Manager Report Upload -->
+  <div class="section">
+    <div class="section-label">Manager Closing Report</div>
+    <div class="card">
+      <div class="mgr-upload-area">
+        <span style="font-size:13px;color:var(--muted);flex:1;">Attach closing report</span>
+        <label class="upload-btn">
+          📎 Upload
+          <input type="file" accept="image/*" multiple style="display:none"
+            onchange="handleMgrUpload(event,'${id}-mgr-thumbs')">
+        </label>
+      </div>
+      <div class="mgr-thumbs" id="${id}-mgr-thumbs"></div>
+    </div>
+  </div>
+
+  <!-- Staff Cash -->
+  <div class="section">
+    <div class="section-label">Staff Cash Owed</div>
+    <div id="${id}-staff-list"></div>
+    <button class="add-btn" onclick="addStaff('${id}')">+ Add Staff Member</button>
+  </div>
+
+  <!-- Door Cash -->
+  <div class="section">
+    <div class="section-label">Door Cash</div>
+    <div class="card">
+      <div class="field">
+        <span class="field-label">Door Total</span>
+        <input type="number" placeholder="0.00" id="${id}-door-total" step="0.01" oninput="recalcNight('${id}')">
+      </div>
+      <div class="field" style="background:var(--accent-dim);">
+        <span class="field-label" style="color:var(--accent);">Luna's Half</span>
+        <span id="${id}-door-half" style="font-family:'DM Mono',monospace;font-size:15px;font-weight:600;color:var(--accent);margin-left:auto;">—</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manager Cash-Out -->
+  <div class="section">
+    <div class="section-label">Manager Cash-Out</div>
+    <div class="card" id="${id}-spend-list">
+      ${spendRowHTML(id)}
+    </div>
+    <button class="add-btn" onclick="addSpend('${id}')">+ Add Cash-Out</button>
+  </div>
+
+  <!-- Status -->
+  <div class="status-banner" id="${id}-status"></div>
+
+  <!-- Reconciliation -->
+  <div class="section">
+    <div class="section-label">Reconciliation</div>
+    <div class="result-card">
+      <div class="result-row">
+        <span class="result-label">Staff Cash Total</span>
+        <span class="result-value" id="${id}-r-staff">$0.00</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Door (Luna's Half)</span>
+        <span class="result-value" id="${id}-r-door">$0.00</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Manager Spend</span>
+        <span class="result-value" id="${id}-r-spend" style="color:var(--red);">$0.00</span>
+      </div>
+      <div class="result-row total">
+        <span class="result-label">DEPOSIT</span>
+        <span class="result-value" id="${id}-r-deposit">$0.00</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function spendRowHTML(id) {
+  return `<div class="spend-row">
+    <input class="spend-desc" type="text" placeholder="Description (e.g. supplies)">
+    <input class="spend-amt" type="number" placeholder="0.00" step="0.01" oninput="recalcNight('${id}')">
+    <button class="remove-btn" onclick="this.parentElement.remove();recalcNight('${id}')">×</button>
+  </div>`;
+}
+
+// ── STAFF BLOCK ──────────────────────────────────────────
+let staffCount = 0;
+function addStaff(nightId) {
+  staffCount++;
+  const sid = nightId + '-s' + staffCount;
+  const list = document.getElementById(nightId + '-staff-list');
+  const block = document.createElement('div');
+  block.className = 'staff-block';
+  block.id = sid + '-block';
+  block.innerHTML = `
+    <div class="staff-top">
+      <input class="staff-name-input" type="text" placeholder="Staff name">
+      <input class="staff-amount" type="number" placeholder="0.00" step="0.01"
+        id="${sid}-amt" oninput="recalcNight('${nightId}')">
+      <button class="remove-staff" onclick="document.getElementById('${sid}-block').remove();recalcNight('${nightId}')">×</button>
+    </div>
+    <div class="receipt-row">
+      <span class="receipt-label">📄 Shift receipt</span>
+      <label class="upload-btn">
+        Upload
+        <input type="file" accept="image/*" multiple style="display:none"
+          onchange="handleReceiptUpload(event,'${sid}-thumbs')">
+      </label>
+    </div>
+    <div class="thumb-wrap" id="${sid}-thumbs" style="display:none;"></div>
+  `;
+  list.appendChild(block);
+}
+
+// ── UPLOADS ──────────────────────────────────────────────
+function handleReceiptUpload(event, thumbsId) {
+  const container = document.getElementById(thumbsId);
+  container.style.display = 'flex';
+  Array.from(event.target.files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      img.className = 'thumb';
+      img.onclick = () => openLightbox(e.target.result);
+      container.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function handleMgrUpload(event, thumbsId) {
+  const container = document.getElementById(thumbsId);
+  Array.from(event.target.files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      img.className = 'thumb';
+      img.onclick = () => openLightbox(e.target.result);
+      container.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// ── LIGHTBOX ─────────────────────────────────────────────
+function openLightbox(src) {
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+
+// ── RECALC ───────────────────────────────────────────────
+function recalcNight(id) {
+  const el = s => document.getElementById(id + s);
+  const val = s => parseFloat(el(s)?.value) || 0;
+
+  // Staff sum
+  const panel = document.getElementById('panel-' + id);
+  let staffSum = 0;
+  panel.querySelectorAll('.staff-amount').forEach(i => staffSum += parseFloat(i.value) || 0);
+
+  // Door
+  const doorTotal = val('-door-total');
+  const doorHalf = doorTotal / 2;
+  el('-door-half').textContent = doorTotal ? fmt(doorHalf) : '—';
+
+  // Spend
+  let spendSum = 0;
+  panel.querySelectorAll('.spend-amt').forEach(i => spendSum += parseFloat(i.value) || 0);
+
+  // Deposit
+  const deposit = staffSum + doorHalf - spendSum;
+
+  el('-r-staff').textContent = fmt(staffSum);
+  el('-r-door').textContent = fmt(doorHalf);
+  el('-r-spend').textContent = spendSum > 0 ? '(' + fmt(spendSum).slice(1) + ')' : '$0.00';
+  el('-r-deposit').textContent = fmt(deposit);
+
+  // Status
+  const toastExp = val('-toast-exp');
+  const banner = el('-status');
+  const tab = document.getElementById('tab-' + id);
+  if (toastExp > 0 && staffSum > 0) {
+    const diff = staffSum - toastExp;
+    banner.classList.add('visible');
+    if (Math.abs(diff) <= 1.00) {
+      banner.className = 'status-banner visible ok';
+      banner.innerHTML = `<span>✓ Cash matches Toast</span><span>${diff === 0 ? 'EXACT' : (diff > 0 ? '+' : '') + fmt(Math.abs(diff))}</span>`;
+      tab.classList.remove('has-flag');
+    } else {
+      banner.className = 'status-banner visible off';
+      banner.innerHTML = `<span>⚠ Discrepancy</span><span>${(diff > 0 ? '+' : '-') + fmt(Math.abs(diff))}</span>`;
+      tab.classList.add('has-flag');
+    }
+  } else {
+    banner.className = 'status-banner';
+    tab.classList.remove('has-flag');
+  }
+
+  updateSummary();
+}
+
+// ── TABS ─────────────────────────────────────────────────
+function switchTab(id) {
+  document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel, .summary-panel').forEach(p => p.classList.remove('active'));
+  const tab = document.getElementById('tab-' + id);
+  const panel = document.getElementById('panel-' + id) || document.getElementById('panel-summary');
+  if (tab) tab.classList.add('active');
+  if (panel) panel.classList.add('active');
+}
+
+// ── DELETE NIGHT ─────────────────────────────────────────
+function deleteNight(id) {
+  if (!confirm('Remove this night?')) return;
+  document.getElementById('tab-' + id)?.remove();
+  document.getElementById('panel-' + id)?.remove();
+  // Switch to first remaining tab
+  const firstTab = document.querySelector('.tab-btn');
+  if (firstTab) firstTab.click();
+  updateSummary();
+}
+
+// ── SUMMARY TAB ──────────────────────────────────────────
+function buildSummaryTab() {
+  const tabsWrap = document.getElementById('tabsWrap');
+  const addBtn = tabsWrap.querySelector('.add-night-tab');
+
+  const tab = document.createElement('button');
+  tab.className = 'tab-btn';
+  tab.id = 'tab-summary';
+  tab.textContent = 'Summary';
+  tab.onclick = () => { updateSummary(); switchTab('summary'); };
+  tabsWrap.insertBefore(tab, addBtn);
+
+  const panel = document.createElement('div');
+  panel.className = 'summary-panel';
+  panel.id = 'panel-summary';
+  panel.innerHTML = `
+    <div class="section" style="margin-top:14px;">
+      <div class="grand-total-card" id="grand-total-card">
+        <div>
+          <div class="gt-label">Weekly Deposit</div>
+          <div style="font-size:11px;opacity:0.7;font-family:'DM Mono',monospace;margin-top:2px;">All nights combined</div>
+        </div>
+        <div class="gt-value" id="grand-total-val">$0.00</div>
+      </div>
+      <div id="summary-nights"></div>
+    </div>
+    <div class="action-row">
+      <button class="btn-primary" onclick="emailFrances()">✉ Email Frances</button>
+      <button class="btn-secondary" onclick="downloadReport()">⬇ Download</button>
+    </div>
+  `;
+  document.getElementById('panelsContainer').appendChild(panel);
+}
+
+function updateSummary() {
+  const container = document.getElementById('summary-nights');
+  if (!container) return;
+  let grandTotal = 0;
+  let html = '';
+
+  document.querySelectorAll('.panel').forEach(panel => {
+    const id = panel.id.replace('panel-', '');
+    const dateEl = document.getElementById(id + '-date');
+    const mgrEl = document.getElementById(id + '-manager');
+    if (!dateEl) return;
+
+    const date = dateEl.value || '—';
+    const mgr = mgrEl?.value || '—';
+
+    let staffSum = 0;
+    panel.querySelectorAll('.staff-amount').forEach(i => staffSum += parseFloat(i.value) || 0);
+    const doorTotal = parseFloat(document.getElementById(id + '-door-total')?.value) || 0;
+    const doorHalf = doorTotal / 2;
+    let spendSum = 0;
+    panel.querySelectorAll('.spend-amt').forEach(i => spendSum += parseFloat(i.value) || 0);
+    const deposit = staffSum + doorHalf - spendSum;
+    const toastExp = parseFloat(document.getElementById(id + '-toast-exp')?.value) || 0;
+    const diff = toastExp > 0 ? staffSum - toastExp : null;
+    const flagged = diff !== null && Math.abs(diff) > 1;
+
+    grandTotal += deposit;
+
+    html += `<div class="summary-night">
+      <div class="summary-night-header ${flagged ? 'flagged' : ''}">
+        <span>${date} — Mgr: ${mgr}</span>
+        <span>${flagged ? '⚠ DISCREPANCY' : '✓ OK'}</span>
+      </div>
+      <div class="summary-row"><span>Staff Cash</span><span>${fmt(staffSum)}</span></div>
+      <div class="summary-row"><span>Door (Luna's Half)</span><span>${fmt(doorHalf)}</span></div>
+      <div class="summary-row"><span>Manager Spend</span><span style="color:var(--red)">${spendSum > 0 ? '(' + fmt(spendSum).slice(1) + ')' : '$0.00'}</span></div>
+      <div class="summary-row" style="font-weight:600;background:var(--accent-dim)"><span>Deposit</span><span style="color:var(--accent)">${fmt(deposit)}</span></div>
+      ${flagged ? `<div class="summary-row" style="color:var(--red);font-size:12px;font-family:'DM Mono',monospace"><span>Cash vs Toast diff</span><span>${(diff > 0 ? '+' : '-') + fmt(Math.abs(diff))}</span></div>` : ''}
+    </div>`;
+  });
+
+  container.innerHTML = html;
+  const gtEl = document.getElementById('grand-total-val');
+  if (gtEl) gtEl.textContent = fmt(grandTotal);
+}
+
+// ── EMAIL ─────────────────────────────────────────────────
+function emailFrances() {
+  updateSummary();
+  let body = 'Hi Frances,\n\nWeekly cash reconciliation for Luna Lounge:\n\n';
+  let grandTotal = 0;
+  let hasFlag = false;
+
+  document.querySelectorAll('.panel').forEach(panel => {
+    const id = panel.id.replace('panel-', '');
+    const dateEl = document.getElementById(id + '-date');
+    if (!dateEl) return;
+
+    const date = dateEl.value || '—';
+    const mgr = document.getElementById(id + '-manager')?.value || '—';
+    let staffSum = 0;
+    panel.querySelectorAll('.staff-amount').forEach(i => staffSum += parseFloat(i.value) || 0);
+    const doorTotal = parseFloat(document.getElementById(id + '-door-total')?.value) || 0;
+    const doorHalf = doorTotal / 2;
+    let spendSum = 0;
+    panel.querySelectorAll('.spend-amt').forEach(i => spendSum += parseFloat(i.value) || 0);
+    const deposit = staffSum + doorHalf - spendSum;
+    const toastExp = parseFloat(document.getElementById(id + '-toast-exp')?.value) || 0;
+    const diff = toastExp > 0 ? staffSum - toastExp : null;
+    const flagged = diff !== null && Math.abs(diff) > 1;
+    if (flagged) hasFlag = true;
+    grandTotal += deposit;
+
+    body += `--- ${date} | Manager: ${mgr} ---\n`;
+    body += `  Staff Cash:       ${fmt(staffSum)}\n`;
+    body += `  Door (Luna Half): ${fmt(doorHalf)}\n`;
+    body += `  Manager Spend:    ${spendSum > 0 ? '(' + fmt(spendSum).slice(1) + ')' : '$0.00'}\n`;
+    body += `  Deposit:          ${fmt(deposit)}\n`;
+    if (flagged) body += `  ⚠ DISCREPANCY: Cash vs Toast = ${(diff > 0 ? '+' : '-') + fmt(Math.abs(diff))}\n`;
+    body += '\n';
+  });
+
+  body += `=====================================\n`;
+  body += `TOTAL WEEKLY DEPOSIT: ${fmt(grandTotal)}\n`;
+  if (hasFlag) body += `\n⚠ One or more nights flagged for discrepancy. See above.\n`;
+  body += `\nNote: Receipt images are attached separately as PDF.\n\nRobbie`;
+
+  const subject = `Luna Lounge — Weekly Cash Rec ${new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}`;
+  window.location.href = `mailto:${BOOKKEEPER}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+// ── DOWNLOAD REPORT ──────────────────────────────────────
+function downloadReport() {
+  updateSummary();
+  const weekLabel = document.getElementById('weekBadge').textContent || 'Week';
+  let grandTotal = 0;
+  let hasFlag = false;
+  let nightsHTML = '';
+
+  document.querySelectorAll('.panel').forEach(panel => {
+    const id = panel.id.replace('panel-', '');
+    const dateEl = document.getElementById(id + '-date');
+    if (!dateEl) return;
+    const date = dateEl.value || '—';
+    const mgr = document.getElementById(id + '-manager')?.value || '—';
+    let staffSum = 0;
+    panel.querySelectorAll('.staff-amount').forEach(i => staffSum += parseFloat(i.value) || 0);
+    const doorTotal = parseFloat(document.getElementById(id + '-door-total')?.value) || 0;
+    const doorHalf = doorTotal / 2;
+    let spendSum = 0;
+    panel.querySelectorAll('.spend-amt').forEach(i => spendSum += parseFloat(i.value) || 0);
+    const deposit = staffSum + doorHalf - spendSum;
+    const toastExp = parseFloat(document.getElementById(id + '-toast-exp')?.value) || 0;
+    const diff = toastExp > 0 ? staffSum - toastExp : null;
+    const flagged = diff !== null && Math.abs(diff) > 1;
+    if (flagged) hasFlag = true;
+    grandTotal += deposit;
+
+    // Staff rows
+    let staffRows = '';
+    panel.querySelectorAll('.staff-block').forEach(block => {
+      const name = block.querySelector('.staff-name-input')?.value || '—';
+      const amt = parseFloat(block.querySelector('.staff-amount')?.value) || 0;
+      if (name || amt) staffRows += `<tr><td style="padding:6px 10px;color:#6b7280;">${name}</td><td style="padding:6px 10px;text-align:right;font-family:monospace;">${fmt(amt)}</td></tr>`;
+    });
+
+    // Spend rows
+    let spendRows = '';
+    panel.querySelectorAll('.spend-row').forEach(row => {
+      const desc = row.querySelector('.spend-desc')?.value || '—';
+      const amt = parseFloat(row.querySelector('.spend-amt')?.value) || 0;
+      if (amt) spendRows += `<tr><td style="padding:6px 10px;color:#6b7280;">${desc}</td><td style="padding:6px 10px;text-align:right;font-family:monospace;color:#e02424;">(${fmt(amt).slice(1)})</td></tr>`;
+    });
+
+    nightsHTML += `
+      <div style="margin-bottom:20px;border:1px solid #dde1e9;border-radius:10px;overflow:hidden;">
+        <div style="background:${flagged ? '#e02424' : '#1a56db'};color:white;padding:10px 14px;display:flex;justify-content:space-between;font-family:monospace;font-size:12px;font-weight:600;letter-spacing:0.06em;">
+          <span>${date} — MGR: ${mgr.toUpperCase()}</span>
+          <span>${flagged ? '⚠ DISCREPANCY' : '✓ OK'}</span>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          ${staffRows}
+          <tr style="border-top:1px solid #dde1e9;"><td style="padding:6px 10px;color:#6b7280;">Door (Luna's Half)</td><td style="padding:6px 10px;text-align:right;font-family:monospace;">${fmt(doorHalf)}</td></tr>
+          ${spendRows}
+          <tr style="background:#eff6ff;font-weight:700;border-top:1px solid #dde1e9;">
+            <td style="padding:10px 14px;color:#1a56db;">DEPOSIT</td>
+            <td style="padding:10px 14px;text-align:right;font-family:monospace;color:#1a56db;font-size:15px;">${fmt(deposit)}</td>
+          </tr>
+          ${flagged ? `<tr style="background:#fef2f2;"><td colspan="2" style="padding:6px 10px;color:#e02424;font-family:monospace;font-size:11px;">Cash vs Toast: ${(diff > 0 ? '+' : '-') + fmt(Math.abs(diff))}</td></tr>` : ''}
+        </table>
+      </div>`;
+  });
+
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>Luna Lounge Cash Rec — ${weekLabel}</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  </head><body style="font-family:'Helvetica Neue',sans-serif;max-width:600px;margin:0 auto;padding:20px;background:#f0f2f5;">
+  <div style="background:#1a56db;color:white;border-radius:10px;padding:16px 20px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;">
+    <div>
+      <div style="font-size:13px;font-family:monospace;letter-spacing:0.12em;text-transform:uppercase;">Luna Lounge</div>
+      <div style="font-size:10px;opacity:0.75;font-family:monospace;margin-top:2px;">WEEKLY CASH RECONCILIATION</div>
+    </div>
+    <div style="font-family:monospace;font-size:10px;background:rgba(255,255,255,0.15);padding:4px 10px;border-radius:20px;">${weekLabel}</div>
+  </div>
+  ${nightsHTML}
+  <div style="background:#1a56db;color:white;border-radius:10px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+    <div>
+      <div style="font-size:11px;font-family:monospace;letter-spacing:0.1em;text-transform:uppercase;opacity:0.85;">Weekly Deposit</div>
+      <div style="font-size:10px;opacity:0.65;font-family:monospace;margin-top:2px;">All nights combined</div>
+    </div>
+    <div style="font-size:26px;font-family:monospace;font-weight:700;">${fmt(grandTotal)}</div>
+  </div>
+  ${hasFlag ? '<div style="background:#fef2f2;border:1px solid #e02424;border-radius:8px;padding:12px 14px;color:#e02424;font-size:12px;font-family:monospace;">⚠ One or more nights flagged for discrepancy.</div>' : ''}
+  <div style="text-align:center;color:#6b7280;font-size:10px;font-family:monospace;margin-top:16px;">Generated ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div>
+  </body></html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dateStr = new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = `luna-cash-rec-${dateStr}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── WEEK BADGE ───────────────────────────────────────────
+function updateWeekBadge() {
+  const dates = [];
+  document.querySelectorAll('[id$="-date"]').forEach(el => {
+    if (el.value) dates.push(new Date(el.value));
+  });
+  if (dates.length === 0) return;
+  dates.sort((a,b) => a-b);
+  const opts = { month: 'short', day: 'numeric' };
+  const badge = document.getElementById('weekBadge');
+  if (dates.length === 1) {
+    badge.textContent = 'Week of ' + dates[0].toLocaleDateString('en-US', opts);
+  } else {
+    badge.textContent = dates[0].toLocaleDateString('en-US', opts) + ' – ' + dates[dates.length-1].toLocaleDateString('en-US', opts);
+  }
+}
+
+// ── INIT ─────────────────────────────────────────────────
+addNight('Thu');
+addNight('Fri');
+addNight('Sat');
+// Pre-add 2 staff slots for first night
+const firstId = 'night-1';
+addStaff(firstId);
+addStaff(firstId);
+
+</script>
+</body>
+</html>
