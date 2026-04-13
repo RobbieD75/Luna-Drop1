@@ -17,6 +17,8 @@
   --red-dim: rgba(224,36,36,0.08);
   --green: #057a55;
   --green-dim: rgba(5,122,85,0.08);
+  --purple: #7c3aed;
+  --purple-dim: rgba(124,58,237,0.08);
   --text: #111827;
   --muted: #6b7280;
   --input-bg: #f9fafb;
@@ -34,7 +36,6 @@ body {
   padding-bottom: 80px;
 }
 
-/* HEADER */
 header {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
@@ -60,7 +61,30 @@ header p { font-size: 10px; color: var(--muted); margin-top: 2px; font-family: '
   letter-spacing: 0.06em;
 }
 
-/* TABS */
+/* AUTO-FILL BANNER */
+.autofill-banner {
+  background: linear-gradient(135deg, var(--purple-dim), var(--accent-dim));
+  border: 1px solid var(--purple);
+  border-radius: var(--radius);
+  margin: 14px 14px 0;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-family: 'DM Mono', monospace;
+  color: var(--purple);
+  letter-spacing: 0.04em;
+}
+.autofill-banner .af-icon { font-size: 16px; }
+.autofill-banner .af-text { flex: 1; }
+.autofill-banner .af-close {
+  background: none; border: none; color: var(--purple);
+  font-size: 16px; cursor: pointer; padding: 0;
+  opacity: 0.6;
+}
+.autofill-banner .af-close:hover { opacity: 1; }
+
 .tabs-wrap {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
@@ -90,6 +114,8 @@ header p { font-size: 10px; color: var(--muted); margin-top: 2px; font-family: '
 .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
 .tab-btn.has-flag { color: var(--red); }
 .tab-btn.has-flag.active { border-bottom-color: var(--red); }
+.tab-btn.auto-filled { color: var(--purple); }
+.tab-btn.auto-filled.active { border-bottom-color: var(--purple); color: var(--purple); }
 
 .add-night-tab {
   flex-shrink: 0;
@@ -102,15 +128,11 @@ header p { font-size: 10px; color: var(--muted); margin-top: 2px; font-family: '
   cursor: pointer;
 }
 
-/* PANELS */
 .panel { display: none; padding: 0 0 20px 0; }
 .panel.active { display: block; }
-
-/* SUMMARY PANEL */
 .summary-panel { display: none; padding: 0 0 20px 0; }
 .summary-panel.active { display: block; }
 
-/* SECTIONS */
 .section { margin: 14px 14px 0; }
 .section-label {
   font-size: 10px;
@@ -122,7 +144,6 @@ header p { font-size: 10px; color: var(--muted); margin-top: 2px; font-family: '
   padding-left: 2px;
 }
 
-/* CARDS */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -147,8 +168,14 @@ header p { font-size: 10px; color: var(--muted); margin-top: 2px; font-family: '
 .field input::placeholder { color: #b0b8c8; }
 .field input[type="date"] { font-family: 'DM Sans', sans-serif; font-size: 14px; color-scheme: light; }
 .field input[type="text"] { font-family: 'DM Sans', sans-serif; }
+.field input.autofilled { color: var(--purple); }
 
-/* STAFF ROWS */
+/* AUTO-FILLED FIELD HIGHLIGHT */
+.field.was-autofilled {
+  background: var(--purple-dim);
+  border-left: 3px solid var(--purple);
+}
+
 .staff-block {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -169,6 +196,15 @@ header p { font-size: 10px; color: var(--muted); margin-top: 2px; font-family: '
   font-size: 14px; font-weight: 600;
 }
 .staff-name-input::placeholder { color: #b0b8c8; font-weight: 400; }
+.staff-name-input.autofilled { color: var(--purple); }
+.staff-role-badge {
+  font-size: 10px; font-family: 'DM Mono', monospace;
+  background: var(--purple-dim); color: var(--purple);
+  border: 1px solid rgba(124,58,237,0.2);
+  border-radius: 4px; padding: 2px 7px;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  white-space: nowrap;
+}
 .staff-amount {
   background: var(--input-bg); border: 1px solid var(--border);
   border-radius: 8px; padding: 8px 11px; width: 105px;
@@ -206,14 +242,33 @@ header p { font-size: 10px; color: var(--muted); margin-top: 2px; font-family: '
 }
 .remove-staff:hover { color: var(--red); }
 
-/* MANAGER REPORT UPLOAD */
 .mgr-upload-area {
   display: flex; align-items: center; gap: 10px;
   padding: 13px 14px; flex-wrap: wrap;
 }
 .mgr-thumbs { display: flex; gap: 6px; flex-wrap: wrap; padding: 0 14px 12px; }
 
-/* SPEND ROWS */
+/* SHIFT NOTES */
+.shift-notes-area {
+  width: 100%; padding: 12px 14px;
+  background: none; border: none; outline: none;
+  font-family: 'DM Sans', sans-serif; font-size: 13px;
+  color: var(--text); resize: none; min-height: 70px;
+  line-height: 1.5;
+}
+.shift-notes-area::placeholder { color: #b0b8c8; }
+.shift-notes-area.autofilled { color: var(--purple); font-style: italic; }
+
+/* NET SALES */
+.net-sales-display {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 13px 14px;
+  background: var(--green-dim);
+  border-bottom: 1px solid var(--border);
+}
+.net-sales-display .ns-label { font-size: 13px; color: var(--green); font-weight: 600; }
+.net-sales-display .ns-value { font-family: 'DM Mono', monospace; font-size: 16px; color: var(--green); font-weight: 700; }
+
 .spend-row {
   display: flex; align-items: center; gap: 8px;
   padding: 11px 14px; border-bottom: 1px solid var(--border);
@@ -238,7 +293,6 @@ header p { font-size: 10px; color: var(--muted); margin-top: 2px; font-family: '
 }
 .remove-btn:hover { color: var(--red); }
 
-/* ADD BUTTONS */
 .add-btn {
   width: 100%; padding: 12px;
   background: none; border: 1px dashed var(--border);
@@ -249,7 +303,6 @@ header p { font-size: 10px; color: var(--muted); margin-top: 2px; font-family: '
 }
 .add-btn:active { background: var(--accent-dim); }
 
-/* STATUS BANNER */
 .status-banner {
   margin: 12px 14px 0; padding: 12px 14px;
   border-radius: var(--radius); font-family: 'DM Mono', monospace;
@@ -261,7 +314,6 @@ header p { font-size: 10px; color: var(--muted); margin-top: 2px; font-family: '
 .status-banner.ok { background: var(--green-dim); border: 1px solid var(--green); color: var(--green); }
 .status-banner.off { background: var(--red-dim); border: 1px solid var(--red); color: var(--red); }
 
-/* RESULT CARD */
 .result-card {
   background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--radius); overflow: hidden;
@@ -277,7 +329,6 @@ header p { font-size: 10px; color: var(--muted); margin-top: 2px; font-family: '
 .result-row.total .result-label { color: var(--accent); font-weight: 700; font-size: 14px; }
 .result-row.total .result-value { color: var(--accent); font-size: 18px; font-weight: 700; }
 
-/* NIGHT HEADER BAR */
 .night-header {
   display: flex; justify-content: space-between; align-items: center;
   padding: 12px 14px 0;
@@ -290,7 +341,6 @@ header p { font-size: 10px; color: var(--muted); margin-top: 2px; font-family: '
 }
 .delete-night-btn:hover { color: var(--red); }
 
-/* WEEKLY SUMMARY */
 .summary-night {
   background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--radius); overflow: hidden; margin-bottom: 10px;
@@ -319,7 +369,6 @@ header p { font-size: 10px; color: var(--muted); margin-top: 2px; font-family: '
 .grand-total-card .gt-label { font-size: 12px; font-family: 'DM Mono', monospace; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.85; }
 .grand-total-card .gt-value { font-size: 28px; font-family: 'DM Mono', monospace; font-weight: 700; }
 
-/* ACTION BUTTONS */
 .action-row {
   display: flex; gap: 10px; margin: 14px 14px 0;
 }
@@ -340,7 +389,6 @@ header p { font-size: 10px; color: var(--muted); margin-top: 2px; font-family: '
   cursor: pointer; font-weight: 600;
 }
 
-/* LIGHTBOX */
 .lightbox {
   display: none; position: fixed; inset: 0;
   background: rgba(0,0,0,0.92); z-index: 999;
@@ -358,7 +406,8 @@ header p { font-size: 10px; color: var(--muted); margin-top: 2px; font-family: '
 
 @media print {
   header, .tabs-wrap, .add-btn, .action-row, .delete-night-btn,
-  .remove-btn, .remove-staff, .night-header .delete-night-btn { display: none !important; }
+  .remove-btn, .remove-staff, .night-header .delete-night-btn,
+  .autofill-banner { display: none !important; }
   .panel { display: block !important; }
   .summary-panel { display: block !important; }
 }
@@ -375,13 +424,11 @@ header p { font-size: 10px; color: var(--muted); margin-top: 2px; font-family: '
 </header>
 
 <div class="tabs-wrap" id="tabsWrap">
-  <!-- tabs injected by JS -->
   <button class="add-night-tab" onclick="addNight()" title="Add night">＋</button>
 </div>
 
 <div id="panelsContainer"></div>
 
-<!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
   <button class="lightbox-close" onclick="closeLightbox()">×</button>
   <img id="lightboxImg" src="" alt="">
@@ -391,7 +438,7 @@ header p { font-size: 10px; color: var(--muted); margin-top: 2px; font-family: '
 const BOOKKEEPER = 'accounting@wannerstransport.com';
 const BOOKKEEPER_NAME = 'Frances';
 let nightCount = 0;
-let nights = []; // array of night data objects
+let nights = [];
 
 function fmt(n) {
   if (isNaN(n)) n = 0;
@@ -403,6 +450,92 @@ function fmtSigned(n) {
   return (n < 0 ? '-' : '') + fmt(n);
 }
 
+// ── URL PARAM AUTO-FILL ──────────────────────────────────
+function parseURLParams() {
+  const params = new URLSearchParams(window.location.search);
+  if (!params.has('date') && !params.has('event')) return null;
+  return {
+    date: params.get('date') || '',
+    event: params.get('event') || '',
+    manager: params.get('manager') || '',
+    bartender: params.get('bartender') || '',
+    server: params.get('server') || '',
+    barback: params.get('barback') || '',
+    hookah: params.get('hookah') || '',
+    dj: params.get('dj') || '',
+    net_sales: params.get('net_sales') || '',
+    toast_expected: params.get('toast_expected') || '',
+    toast_final: params.get('toast_final') || '',
+    door_cash: params.get('door_cash') || '',
+    shift_notes: params.get('shift_notes') || ''
+  };
+}
+
+function autoFillNight(nightId, data) {
+  const set = (suffix, value) => {
+    const el = document.getElementById(nightId + suffix);
+    if (el && value) {
+      el.value = value;
+      el.classList.add('autofilled');
+      el.closest('.field')?.classList.add('was-autofilled');
+    }
+  };
+
+  set('-date', data.date);
+  set('-manager', data.manager);
+  set('-toast-exp', data.toast_expected);
+  set('-toast-final', data.toast_final);
+  set('-door-total', data.door_cash);
+  set('-net-sales', data.net_sales);
+  set('-dj', data.dj);
+
+  // Shift notes
+  if (data.shift_notes) {
+    const notesEl = document.getElementById(nightId + '-shift-notes');
+    if (notesEl) {
+      notesEl.value = decodeURIComponent(data.shift_notes);
+      notesEl.classList.add('autofilled');
+    }
+  }
+
+  // Staff — add named rows with blank amounts
+  const staffRoles = [
+    { role: 'Bartender', name: data.bartender },
+    { role: 'Server', name: data.server },
+    { role: 'Barback', name: data.barback },
+    { role: 'Hookah', name: data.hookah }
+  ].filter(s => s.name);
+
+  staffRoles.forEach(s => addStaff(nightId, s.name, s.role));
+
+  // Mark tab as auto-filled
+  const tab = document.getElementById('tab-' + nightId);
+  if (tab) tab.classList.add('auto-filled');
+
+  // Update display fields
+  recalcNight(nightId);
+  updateWeekBadge();
+
+  // Show banner
+  showAutofillBanner(data.event || data.date);
+}
+
+function showAutofillBanner(label) {
+  const existing = document.getElementById('autofill-banner');
+  if (existing) existing.remove();
+
+  const container = document.getElementById('panelsContainer');
+  const banner = document.createElement('div');
+  banner.id = 'autofill-banner';
+  banner.className = 'autofill-banner';
+  banner.innerHTML = `
+    <span class="af-icon">⚡</span>
+    <span class="af-text">Auto-filled from Danny's closing report — <strong>${label}</strong>. Enter staff cash from envelope.</span>
+    <button class="af-close" onclick="this.parentElement.remove()">×</button>
+  `;
+  container.insertBefore(banner, container.firstChild);
+}
+
 // ── NIGHT CREATION ──────────────────────────────────────
 function addNight(label) {
   nightCount++;
@@ -410,7 +543,6 @@ function addNight(label) {
   const defaultLabels = ['Thu','Fri','Sat','Sun','Mon','Tue','Wed'];
   const tabLabel = label || defaultLabels[(nightCount - 1) % defaultLabels.length];
 
-  // Tab
   const tabsWrap = document.getElementById('tabsWrap');
   const addBtn = tabsWrap.querySelector('.add-night-tab');
   const tab = document.createElement('button');
@@ -420,18 +552,17 @@ function addNight(label) {
   tab.onclick = () => switchTab(id);
   tabsWrap.insertBefore(tab, addBtn);
 
-  // Panel
   const panel = document.createElement('div');
   panel.className = 'panel';
   panel.id = 'panel-' + id;
   panel.innerHTML = buildNightHTML(id, tabLabel, nightCount);
   document.getElementById('panelsContainer').appendChild(panel);
 
-  // Add summary tab if first night
   if (nightCount === 1) buildSummaryTab();
 
   switchTab(id);
   updateWeekBadge();
+  return id;
 }
 
 function buildNightHTML(id, label, num) {
@@ -450,8 +581,27 @@ function buildNightHTML(id, label, num) {
         <input type="date" id="${id}-date" onchange="updateWeekBadge(); recalcNight('${id}')">
       </div>
       <div class="field">
+        <span class="field-label">Event</span>
+        <input type="text" placeholder="e.g. Thursday" id="${id}-event" style="text-align:right;">
+      </div>
+      <div class="field">
         <span class="field-label">Manager</span>
         <input type="text" placeholder="Name" id="${id}-manager" style="text-align:right;">
+      </div>
+      <div class="field">
+        <span class="field-label">DJ</span>
+        <input type="text" placeholder="Name" id="${id}-dj" style="text-align:right;">
+      </div>
+    </div>
+  </div>
+
+  <!-- Sales -->
+  <div class="section">
+    <div class="section-label">Sales</div>
+    <div class="card">
+      <div class="field">
+        <span class="field-label">Net Sales</span>
+        <input type="number" placeholder="0.00" id="${id}-net-sales" step="0.01">
       </div>
       <div class="field">
         <span class="field-label">Toast Expected</span>
@@ -472,7 +622,7 @@ function buildNightHTML(id, label, num) {
         <span style="font-size:13px;color:var(--muted);flex:1;">Attach closing report</span>
         <label class="upload-btn">
           📎 Upload
-          <input type="file" accept="image/*" multiple style="display:none"
+          <input type="file" accept="image/*,application/pdf" multiple style="display:none"
             onchange="handleMgrUpload(event,'${id}-mgr-thumbs')">
         </label>
       </div>
@@ -509,6 +659,14 @@ function buildNightHTML(id, label, num) {
       ${spendRowHTML(id)}
     </div>
     <button class="add-btn" onclick="addSpend('${id}')">+ Add Cash-Out</button>
+  </div>
+
+  <!-- Shift Notes -->
+  <div class="section">
+    <div class="section-label">Shift Notes</div>
+    <div class="card">
+      <textarea class="shift-notes-area" id="${id}-shift-notes" placeholder="Manager notes from closing report..."></textarea>
+    </div>
   </div>
 
   <!-- Status -->
@@ -548,16 +706,23 @@ function spendRowHTML(id) {
 
 // ── STAFF BLOCK ──────────────────────────────────────────
 let staffCount = 0;
-function addStaff(nightId) {
+function addStaff(nightId, prefillName, prefillRole) {
   staffCount++;
   const sid = nightId + '-s' + staffCount;
   const list = document.getElementById(nightId + '-staff-list');
   const block = document.createElement('div');
   block.className = 'staff-block';
   block.id = sid + '-block';
+
+  const roleBadge = prefillRole
+    ? `<span class="staff-role-badge">${prefillRole}</span>`
+    : '';
+
   block.innerHTML = `
     <div class="staff-top">
-      <input class="staff-name-input" type="text" placeholder="Staff name">
+      <input class="staff-name-input ${prefillName ? 'autofilled' : ''}" type="text"
+        placeholder="Staff name" value="${prefillName || ''}">
+      ${roleBadge}
       <input class="staff-amount" type="number" placeholder="0.00" step="0.01"
         id="${sid}-amt" oninput="recalcNight('${nightId}')">
       <button class="remove-staff" onclick="document.getElementById('${sid}-block').remove();recalcNight('${nightId}')">×</button>
@@ -607,7 +772,6 @@ function handleMgrUpload(event, thumbsId) {
   });
 }
 
-// ── LIGHTBOX ─────────────────────────────────────────────
 function openLightbox(src) {
   document.getElementById('lightboxImg').src = src;
   document.getElementById('lightbox').classList.add('open');
@@ -621,21 +785,17 @@ function recalcNight(id) {
   const el = s => document.getElementById(id + s);
   const val = s => parseFloat(el(s)?.value) || 0;
 
-  // Staff sum
   const panel = document.getElementById('panel-' + id);
   let staffSum = 0;
   panel.querySelectorAll('.staff-amount').forEach(i => staffSum += parseFloat(i.value) || 0);
 
-  // Door
   const doorTotal = val('-door-total');
   const doorHalf = doorTotal / 2;
   el('-door-half').textContent = doorTotal ? fmt(doorHalf) : '—';
 
-  // Spend
   let spendSum = 0;
   panel.querySelectorAll('.spend-amt').forEach(i => spendSum += parseFloat(i.value) || 0);
 
-  // Deposit
   const deposit = staffSum + doorHalf - spendSum;
 
   el('-r-staff').textContent = fmt(staffSum);
@@ -643,7 +803,6 @@ function recalcNight(id) {
   el('-r-spend').textContent = spendSum > 0 ? '(' + fmt(spendSum).slice(1) + ')' : '$0.00';
   el('-r-deposit').textContent = fmt(deposit);
 
-  // Status
   const toastExp = val('-toast-exp');
   const banner = el('-status');
   const tab = document.getElementById('tab-' + id);
@@ -682,7 +841,6 @@ function deleteNight(id) {
   if (!confirm('Remove this night?')) return;
   document.getElementById('tab-' + id)?.remove();
   document.getElementById('panel-' + id)?.remove();
-  // Switch to first remaining tab
   const firstTab = document.querySelector('.tab-btn');
   if (firstTab) firstTab.click();
   updateSummary();
@@ -813,7 +971,7 @@ function emailFrances() {
   window.location.href = `mailto:${BOOKKEEPER}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
-// ── DOWNLOAD REPORT ──────────────────────────────────────
+// ── DOWNLOAD ─────────────────────────────────────────────
 function downloadReport() {
   updateSummary();
   const weekLabel = document.getElementById('weekBadge').textContent || 'Week';
@@ -840,15 +998,14 @@ function downloadReport() {
     if (flagged) hasFlag = true;
     grandTotal += deposit;
 
-    // Staff rows
     let staffRows = '';
     panel.querySelectorAll('.staff-block').forEach(block => {
       const name = block.querySelector('.staff-name-input')?.value || '—';
+      const role = block.querySelector('.staff-role-badge')?.textContent || '';
       const amt = parseFloat(block.querySelector('.staff-amount')?.value) || 0;
-      if (name || amt) staffRows += `<tr><td style="padding:6px 10px;color:#6b7280;">${name}</td><td style="padding:6px 10px;text-align:right;font-family:monospace;">${fmt(amt)}</td></tr>`;
+      if (name) staffRows += `<tr><td style="padding:6px 10px;color:#6b7280;">${name}${role ? ' <span style="font-size:10px;color:#7c3aed;">('+role+')</span>' : ''}</td><td style="padding:6px 10px;text-align:right;font-family:monospace;">${fmt(amt)}</td></tr>`;
     });
 
-    // Spend rows
     let spendRows = '';
     panel.querySelectorAll('.spend-row').forEach(row => {
       const desc = row.querySelector('.spend-desc')?.value || '—';
@@ -901,9 +1058,8 @@ function downloadReport() {
   const blob = new Blob([html], { type: 'text/html' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  const dateStr = new Date().toISOString().slice(0,10);
   a.href = url;
-  a.download = `luna-cash-rec-${dateStr}.html`;
+  a.download = `luna-cash-rec-${new Date().toISOString().slice(0,10)}.html`;
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -926,14 +1082,22 @@ function updateWeekBadge() {
 }
 
 // ── INIT ─────────────────────────────────────────────────
-addNight('Thu');
-addNight('Fri');
-addNight('Sat');
-// Pre-add 2 staff slots for first night
-const firstId = 'night-1';
-addStaff(firstId);
-addStaff(firstId);
+// Check for URL params first
+const urlData = parseURLParams();
 
+if (urlData) {
+  // Auto-fill mode — create one night from the URL data
+  const nightId = addNight(urlData.event || 'Night');
+  autoFillNight(nightId, urlData);
+} else {
+  // Normal mode — default nights
+  addNight('Thu');
+  addNight('Fri');
+  addNight('Sat');
+  const firstId = 'night-1';
+  addStaff(firstId);
+  addStaff(firstId);
+}
 </script>
 </body>
 </html>
